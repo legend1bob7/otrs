@@ -75,18 +75,18 @@ sudo lsof +D /opt/otrs 2>/dev/null
 ## 7. Установка и настройка MariaDB
 sudo vim /etc/my.cnf.d/ignore-lost-found.cnf
 ```diff
-+ [mysqld]
-+ ignore-db-dir=lost+found
+[mysqld]
+ignore-db-dir=lost+found
 ```
 sudo vim /etc/my.cnf.d/zotrs.cnf
 ```diff
-+ [mysql]
-+ max_allowed_packet=256M
-+ [mysqldump]
-+ max_allowed_packet=256M
-+ [mysqld]
-+ innodb_log_file_size = 256M
-+ max_allowed_packet=256M
+[mysql]
+max_allowed_packet=256M
+[mysqldump]
+max_allowed_packet=256M
+[mysqld]
+innodb_log_file_size = 256M
+max_allowed_packet=256M
 ```
 
 ```
@@ -100,5 +100,13 @@ Enter current password for root: Enter
 Switch to unix_socket authentication: Y
 Change the root password?: N
 Всё остальное: Y
+```
+sudo mysql -u root
+```
+CREATE DATABASE otrs CHARACTER SET utf8 COLLATE utf8_general_ci;
+CREATE USER 'otrs'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON *.* TO 'otrs'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
 ```
 
