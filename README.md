@@ -110,3 +110,27 @@ FLUSH PRIVILEGES;
 EXIT;
 ```
 
+## 8. Дамп Базы данных на старом сервере
+```
+Убедись что свободно минимум 180GB
+df -h | awk 'NR==1 || /backup/' 
+sudo mysqldump -u root otrs -r /backup/otrs_backup.sql
+```
+
+## 9. Перенос дампа Базы данных
+```
+scp root@helpdesk-test.example.com:/backup/otrs_backup.sql root@helpdesk-test1.example.com:/var/lib/mysql/
+tmux new -s import (tmux attach -t import)
+sudo mysql -u root otrs < /var/lib/mysql/otrs_backup.sql
+```
+
+## 10. Архивирование папки OTRS на старом сервере
+```
+sudo tar -czpf /tmp/otrs_backup.tar.gz -C /opt otrs
+```
+
+## 11. Перенос папки OTRS на новый сервер
+scp root@helpdesk-test.example.com:/tmp/otrs_backup.tar.gz root@helpdesk-test1.example.com:/opt/otrs_backup.tar.gz
+sudo tar -xzpf /tmp/otrs_backup.tar.gz -C /opt
+
+## 12.
