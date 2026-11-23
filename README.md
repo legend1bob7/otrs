@@ -101,8 +101,8 @@ Switch to unix_socket authentication: Y
 Change the root password?: N
 Всё остальное: Y
 ```
-sudo mysql -u root
 ```
+sudo mysql -u root
 CREATE DATABASE otrs CHARACTER SET utf8 COLLATE utf8_general_ci;
 CREATE USER 'otrs'@'localhost' IDENTIFIED BY 'password';
 GRANT ALL PRIVILEGES ON *.* TO 'otrs'@'localhost';
