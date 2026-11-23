@@ -8,6 +8,7 @@ sudo dnf config-manager --set-enabled crb
 sudo dnf install -y httpd mod_ssl mod_http2 mod_perl
 sudo dnf install -y perl-Archive-Tar perl-Archive-Zip perl-Authen-SASL perl-Crypt-Eksblowfish perl-Crypt-SSLeay perl-DBD-MySQL perl-DBD-Pg perl-Digest-SHA perl-LDAP perl-libwww-perl perl-LWP-Protocol-https perl-Mail-IMAPClient perl-Net-DNS perl-Template-Toolkit perl-Text-CSV_XS perl-XML-LibXML perl-XML-LibXSLT perl-XML-Parser perl-App-cpanminus perl-YAML-LibYAML perl-JSON-XS perl-TimeDate perl-DateTime perl-Encode-HanExtra
 sudo dnf install postfix postfix-pcre -y
+sudo dnf install -y mariadb-server
 ```
 
 ## 2. Правила FireWall
@@ -48,3 +49,56 @@ sudo postfix check
 sudo systemctl enable --now postfix
 sudo systemctl restart postfix
 ```
+
+## 4. Создание пользователя OTRS
+```
+sudo mkdir /opt/otrs
+sudo useradd -u 500 -g 48 -c 'OTRS System User' -d /opt/otrs -s /bin/bash -M otrs
+```
+
+## 5. Остановка OTRS на старом сервере
+```
+sudo systemctl stop httpd
+sudo crontab -u otrs -l >> ~/crontab_backup_otrs
+sudo -i -u otrs
+/opt/otrs/bin/Cron.sh stop
+/opt/otrs/bin/otrs.Daemon.pl stop
+```
+
+## 6. Убедись что OTRS остановлен
+```
+/opt/otrs/bin/otrs.Daemon.pl status
+sudo ps -u otrs
+sudo lsof +D /opt/otrs 2>/dev/null
+```
+
+## 7. Установка и настройка MariaDB
+sudo vim /etc/my.cnf.d/ignore-lost-found.cnf
+```diff
++ [mysqld]
++ ignore-db-dir=lost+found
+```
+sudo vim /etc/my.cnf.d/zotrs.cnf
+```diff
++ [mysql]
++ max_allowed_packet=256M
++ [mysqldump]
++ max_allowed_packet=256M
++ [mysqld]
++ innodb_log_file_size = 256M
++ max_allowed_packet=256M
+```
+
+```
+sudo systemctl enable --now mariadb
+sudo systemctl restart mariadb
+```
+
+```
+sudo mysql_secure_installation
+Enter current password for root: Enter
+Switch to unix_socket authentication: Y
+Change the root password?: N
+Всё остальное: Y
+```
+
