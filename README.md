@@ -1,6 +1,6 @@
-# Перенос Otrs 6.0 с Centos на AlmaLinux
+# Перенос Otrs 6.0 с Centos на AlmaLinux 9.9
 
-## 1. Подготовка новой системы
+## 1. Установка базовых компонентов на новом серере OTRS
 На новом сервере:
 ```
 sudo dnf install -y epel-release
@@ -11,7 +11,7 @@ sudo dnf install postfix postfix-pcre -y
 sudo dnf install -y mariadb-server
 ```
 
-## 2. Правила FireWall
+## 2. Настройка правил Firewall на новом сервере OTRS
 На новом сервере:
 ```
 iptables -A INPUT -p tcp -m tcp --dport 22 -j ACCEPT
