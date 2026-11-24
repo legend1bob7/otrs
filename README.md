@@ -1,6 +1,6 @@
 # Перенос Otrs 6.0 с Centos на AlmaLinux 9.9
 
-## 1. Установка базовых компонентов на новом серере OTRS
+## 1. Установка базовых компонентов на новом сервере OTRS
 На новом сервере:
 ```
 sudo dnf install -y epel-release
@@ -19,7 +19,7 @@ iptables -A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
 iptables -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
 ```
 
-## 3. Перенос Postfix MTA
+## 3. Перенос настроек Postfix MTA с старого сервера на новый сервер OTRS
 На новом сервере:
 ### Файл /etc/postfix/generic со старого сервера
 ### Файл /etc/postfix/relocated со старого сервера
