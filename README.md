@@ -78,7 +78,7 @@ sudo vim /etc/my.cnf.d/ignore-lost-found.cnf
 ignore-db-dir=lost+found
 ```
 sudo vim /etc/my.cnf.d/zotrs.cnf
-```diff
+```
 [mysql]
 max_allowed_packet=256M
 [mysqldump]
@@ -86,6 +86,7 @@ max_allowed_packet=256M
 [mysqld]
 innodb_log_file_size = 256M
 max_allowed_packet=256M
+query_cache_size=32M
 ```
 ### 7.1 Запуск MariaDB
 ```
@@ -215,6 +216,7 @@ sudo -i -u otrs
 Приходит автоответ о создании заявки
 Агент может ответить на заявку 
 Работают эскалации
+Страница Support Data Collector в Web интерфейсе должна показывать теже цифры что и на старом сервере
 ```
 
 
