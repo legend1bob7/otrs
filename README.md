@@ -87,6 +87,8 @@ max_allowed_packet=256M
 innodb_log_file_size = 256M
 max_allowed_packet=256M
 query_cache_size=32M
+innodb_log_file_size=1G
+innodb_buffer_pool_size=8G
 ```
 ### 7.1 Запуск MariaDB
 ```
