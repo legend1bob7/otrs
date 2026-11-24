@@ -202,6 +202,21 @@ sudo -i -u otrs
 /opt/otrs/bin/otrs.Console.pl Maint::Config::Rebuild
 ```
 
+## 14 Запуск OTRS
+```
+sudo -i -u otrs
+/opt/otrs/bin/Cron.sh start
+/opt/otrs/bin/otrs.Daemon.pl start
+/opt/otrs/bin/otrs.Daemon.pl status
+```
 
+## 15 Финальная проверка работы OTRS
+```
+Работает вход по LDAP
+Приходят новые заявки
+Приходит автоответ о создании заявки
+Агент может ответить на заявку 
+Работают эскалации
+```
 
 
