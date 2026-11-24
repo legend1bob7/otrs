@@ -20,13 +20,12 @@ iptables -A INPUT -p tcp -m tcp --dport 443 -j ACCEPT
 ```
 
 ## 3. Перенос настроек Postfix MTA с старого сервера на новый сервер OTRS
-На новом сервере:
-### Файл /etc/postfix/generic со старого сервера
-### Файл /etc/postfix/relocated со старого сервера
-### Файл /etc/postfix/canonical_sender со старого сервера
-### Файл /etc/postfix/sasl_passwd со старого сервера
-### Файл /etc/postfix/main.cf самое важное
-Добавить
+### 3.1 Перенести данные из старого файла /etc/postfix/generic на новый сервер OTRS
+### 3.2 Перенести данные из старого файла /etc/postfix/relocated на новый сервер OTRS
+### 3.3 Перенести данные из старого файла /etc/postfix/canonical_sender на новый сервер OTRS
+### 3.4 Перенести данные из старого файла /etc/postfix/sasl_passwd на новый сервер OTRS
+### 3.5 Добавить настройки в файл /etc/postfix/main.cf на новом сервере OTRS
+/etc/postfix/main.cf
 ```
 smtp_tls_security_level = may
 relayhost = [smtp.example.com]:587
@@ -42,7 +41,7 @@ message_size_limit = 0
 - inet_protocols = all
 + inet_protocols = ipv4
 ```
-### Перечитать проверить перезапустить Postfix
+### 3.6 Перечитать, проверить, перезапустить Postfix
 ```
 sudo postmap /etc/postfix/relocated /etc/postfix/generic /etc/postfix/canonical_sender /etc/postfix/sasl_passwd
 sudo postfix check
@@ -88,12 +87,12 @@ max_allowed_packet=256M
 innodb_log_file_size = 256M
 max_allowed_packet=256M
 ```
-
+### 7.1 Запуск MariaDB
 ```
 sudo systemctl enable --now mariadb
 sudo systemctl restart mariadb
 ```
-
+### 7.2 Первичная настройка MariaDB
 ```
 sudo mysql_secure_installation
 Enter current password for root: Enter
@@ -101,6 +100,7 @@ Switch to unix_socket authentication: Y
 Change the root password?: N
 Всё остальное: Y
 ```
+### 7.3 Создание пользователя и базы данных OTRS
 ```
 sudo mysql -u root
 CREATE DATABASE otrs CHARACTER SET utf8 COLLATE utf8_general_ci;
@@ -112,12 +112,10 @@ EXIT;
 
 ## 8. Дамп Базы данных на старом сервере
 ```
-Убедись что свободно минимум 180GB
-df -h | awk 'NR==1 || /backup/' 
 sudo mysqldump -u root otrs -r /backup/otrs_backup.sql
 ```
 
-## 9. Перенос дампа Базы данных
+## 9. Перенос дампа базы данных на новый сервер
 ```
 scp root@helpdesk-test.example.com:/backup/otrs_backup.sql root@helpdesk-test1.example.com:/var/lib/mysql/
 tmux new -s import (tmux attach -t import)
