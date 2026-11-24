@@ -130,7 +130,78 @@ sudo tar -czpf /tmp/otrs_backup.tar.gz -C /opt otrs
 ```
 
 ## 11. Перенос папки OTRS на новый сервер
+```
 scp root@helpdesk-test.example.com:/tmp/otrs_backup.tar.gz root@helpdesk-test1.example.com:/opt/otrs_backup.tar.gz
 sudo tar -xzpf /tmp/otrs_backup.tar.gz -C /opt
+```
 
-## 12.
+## 12. Настройка HTTPD
+```
+sudo cp /opt/otrs/scripts/apache2-httpd.include.conf /etc/httpd/conf.d/zzz_otrs.conf
+sudo chmod 644 /etc/httpd/conf.d/zzz_otrs.conf
+```
+sudo vim /etc/httpd/conf.d/security.conf
+```
+ServerTokens Prod
+ServerSignature Off
+```
+sudo vim /etc/httpd/conf.d/helpdesk.conf
+```
+<VirtualHost *:80>
+    ServerName helpdesk-test.example.com
+    Redirect permanent /  https://helpdesk-test.example.com/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName helpdesk-test.ascon.ru
+    Redirect permanent /index.html https://helpdesk-test.example.com/otrs/customer.pl
+    SSLEngine On
+    SSLCertificateKeyFile   /etc/pki/tls/private/helpdesk-test.example.com.key
+    SSLCertificateFile      /etc/pki/tls/certs/helpdesk-test.example.com.crt
+    RemoteIPHeader X-Real-IP
+</VirtualHost>
+```
+sudo vim /etc/httpd/conf.d/ssl.conf
+```diff
+- # <VirtualHost _default_:443>
+- # Закоментировать весь блок
+- # </VirtualHost>
+```
+### 12.2 Перенести SSL Сертификат
+### 12.3 Проверить конфигурацию HTTPD
+```
+httpd -M
+httpd -S
+```
+
+## 13 Проверка готовности запуска OTRS
+```
+sudo -i -u otrs
+/opt/otrs/bin/otrs.CheckModules.pl
+/opt/otrs/bin/otrs.Console.pl Admin::Package::List
+/opt/otrs/bin/otrs.Console.pl Maint::Database::Check
+```
+### 13.1 Проверка доступности LDAP
+```
+telnet ldap.example.com 389
+telnet ldap.example.com 636
+```
+### 13.2 Проверка доступности IMAP и SMTP
+```
+telnet imap.example.com 993
+
+telnet smtp.example.com 25
+telnet smtp.example.com 465
+telnet smtp.example.com 587
+
+```
+### 13.3 Нужно ли ? (Чистим старый кэш и пересобираем конфиг)
+```
+sudo -i -u otrs
+/opt/otrs/bin/otrs.Console.pl Maint::Cache::Delete
+/opt/otrs/bin/otrs.Console.pl Maint::Config::Rebuild
+```
+
+
+
+
